@@ -4,6 +4,7 @@ if (global.__BonesPlugin__) {
 }
 
 exports.$ = require('jquery');
+
 exports._ = require('underscore');
 exports.mirror = require('mirror');
 
@@ -13,6 +14,8 @@ exports.middleware = require('bones/server/middleware');
 exports.server = true;
 
 exports.Backbone = require('bones/server/backbone');
+exports.Backbone.setDomLibrary(exports.$);
+
 exports.Router = require('bones/server/router');
 exports.Model = require('bones/server/model');
 exports.Collection = require('bones/server/collection');

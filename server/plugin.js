@@ -36,7 +36,6 @@ require.extensions['.bones'] = function(module, filename) {
     }
 };
 
-
 // Default template engine.
 require.extensions['._'] = function(module, filename) {
     var content = fs.readFileSync(filename, 'utf8');
@@ -56,7 +55,8 @@ require.extensions['._'] = function(module, filename) {
         if (app.assets && !(/\.server\._$/.test(filename))) {
             app.assets.templates.push({
                 filename: filename,
-                content: 'template = ' + module.exports + ';'
+                // client must now pass escaped template content over, as _ makes it a hidden closure var
+                content: 'var content = \''+escape(content)+'\';template = _.template(unescape(content));'
             });
         }
     };
