@@ -34,37 +34,22 @@ Backbone.csrf = function(path, timeout) {
 // must be used server-side to invalidate requests without this CSRF
 // protection. The original `Backbone.sync` cannot be reused because it does
 // not send a request body for DELETE requests.
+// BG Changes here.... rely on stock backbone sync method as much as possible, only adding CSRF protection.
+Backbone.oldsync = Backbone.sync;
 Backbone.sync = function(method, model, options) {
-    function getUrl(object) {
-        if (!(object && object.url)) throw new Error("A 'url' property or function must be specified");
-        return _.isFunction(object.url) ? object.url() : object.url;
-    };
-
-    var type = {
-        'create': 'POST',
-        'update': 'PUT',
-        'delete': 'DELETE',
-        'read'  : 'GET'
-    }[method];
-
+	
+	console.log("Calling Bones overridden Backbone.sync method");
+	
     if (method !== 'read') {
         var modelJSON = model.toJSON ? model.toJSON() : model;
         modelJSON['bones.token'] = Backbone.csrf(getUrl(model));
         modelJSON = JSON.stringify(modelJSON);
     }
 
+    options = options || {};
+    
     // Default JSON-request options.
-    var params = {
-        url:          getUrl(model),
-        type:         type,
-        contentType:  'application/json',
-        data:         (modelJSON || null),
-        dataType:     'json',
-        processData:  false,
-        success:      options.success,
-        error:        options.error
-    };
+    options.data = (modelJSON || null);
 
-    // Make the request.
-    return $.ajax(params);
+    return Backbone.oldsync(method, model, options);
 };
