@@ -34,7 +34,10 @@ Backbone.csrf = function(path, timeout) {
 // must be used server-side to invalidate requests without this CSRF
 // protection. The original `Backbone.sync` cannot be reused because it does
 // not send a request body for DELETE requests.
+//
 // BG Changes here.... rely on stock backbone sync method as much as possible, only adding CSRF protection.
+// NB... we totally ignored the comment above, assuming it referred to backbone 0.5.x, not 0.9.1. 
+// I'm sure this will cause hilarity at a later date.
 Backbone.oldsync = Backbone.sync;
 Backbone.sync = function(method, model, options) {
 	
